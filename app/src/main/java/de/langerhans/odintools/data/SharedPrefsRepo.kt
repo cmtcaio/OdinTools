@@ -42,11 +42,11 @@ class SharedPrefsRepo @Inject constructor(
         set(value) = prefs.edit().putBoolean(KEY_CHARGE_LIMIT_ENABLED, value).apply()
 
     var minBatteryLevel
-        get() = prefs.getInt(KEY_MIN_BATTERY_LEVEL, 20)
+        get() = prefs.getInt(KEY_MIN_BATTERY_LEVEL, 75)
         set(value) = prefs.edit().putInt(KEY_MIN_BATTERY_LEVEL, value).apply()
 
     var maxBatteryLevel
-        get() = prefs.getInt(KEY_MAX_BATTERY_LEVEL, 80)
+        get() = prefs.getInt(KEY_MAX_BATTERY_LEVEL, 85)
         set(value) = prefs.edit().putInt(KEY_MAX_BATTERY_LEVEL, value).apply()
 
     private var chargeLimitEnabledListener: OnSharedPreferenceChangeListener? = null
