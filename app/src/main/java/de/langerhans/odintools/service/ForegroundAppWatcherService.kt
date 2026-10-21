@@ -17,8 +17,8 @@ import de.langerhans.odintools.models.FanMode
 import de.langerhans.odintools.models.L2R2Style
 import de.langerhans.odintools.models.PerfMode
 import de.langerhans.odintools.tools.BatteryLevelReceiver
-import de.langerhans.odintools.tools.ShellExecutor
 import de.langerhans.odintools.tools.SettingsRepo
+import de.langerhans.odintools.tools.ShellExecutor
 import de.langerhans.odintools.tools.VideoOutputReceiver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
