@@ -45,19 +45,34 @@ class SettingsRepo @Inject constructor(
         executor.executeAsRoot("service call SurfaceFlinger 1022 f ${String.format("%.1f", value)}")
     }
 
+    /**
+     * The Portal's stock Charging Separation toggle only changes
+     * Settings.System.is_charging_separation. Unlike the original Odin 2,
+     * changing restrict_chg/restrict_cur on Portal may prevent charging
+     * from resuming. Keep the original behavior on other device models.
+     */
+    val isOdin2Portal: Boolean
+        get() = executor.getStringProperty(KEY_PRODUCT_MODEL, "").equals("Odin2 Portal", ignoreCase = true)
+
     fun enableChargingSeparation() {
         isChargingSeparation = true
+        if (isOdin2Portal) return
+
         restrictCurrent = 1000
         restrictCharge = true
     }
 
     fun disableChargingSeparation() {
         isChargingSeparation = false
+        if (isOdin2Portal) return
+
         restrictCurrent = 1000000
         restrictCharge = false
     }
 
     fun chargingSeparationEnabled(): Boolean {
+        if (isOdin2Portal) return isChargingSeparation
+
         return isChargingSeparation && restrictCharge && restrictCurrent == 1000
     }
 
@@ -99,6 +114,7 @@ class SettingsRepo @Inject constructor(
 
     companion object {
         private const val PACKAGE = BuildConfig.APPLICATION_ID
+        const val KEY_PRODUCT_MODEL = "ro.product.model"
         const val KEY_VENDOR_NAME = "ro.vendor.retro.name"
         const val KEY_BUILD_VERSION = "ro.build.odin2.ota.version"
         const val KEY_SATURATION = "persist.sys.sf.color_saturation"
