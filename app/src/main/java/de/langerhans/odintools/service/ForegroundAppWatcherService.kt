@@ -18,6 +18,7 @@ import de.langerhans.odintools.models.L2R2Style
 import de.langerhans.odintools.models.PerfMode
 import de.langerhans.odintools.tools.BatteryLevelReceiver
 import de.langerhans.odintools.tools.ShellExecutor
+import de.langerhans.odintools.tools.SettingsRepo
 import de.langerhans.odintools.tools.VideoOutputReceiver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -37,6 +38,9 @@ class ForegroundAppWatcherService @Inject constructor() : AccessibilityService()
 
     @Inject
     lateinit var prefs: SharedPrefsRepo
+
+    @Inject
+    lateinit var settingsRepo: SettingsRepo
 
     private var batteryLevelReceiver: BatteryLevelReceiver = BatteryLevelReceiver()
     private var videoOutputReceiver: VideoOutputReceiver = VideoOutputReceiver()
@@ -167,6 +171,12 @@ class ForegroundAppWatcherService @Inject constructor() : AccessibilityService()
             registerReceiver(batteryLevelReceiver, intentFilter)
         } else if (!newValue && chargeLimitEnabled) {
             unregisterReceiver(batteryLevelReceiver)
+
+            // Disabling the automatic limit must not leave Portal bypass
+            // enabled indefinitely and prevent later charging.
+            if (settingsRepo.isOdin2Portal && settingsRepo.chargingSeparationEnabled()) {
+                settingsRepo.disableChargingSeparation()
+            }
         }
         chargeLimitEnabled = newValue
     }
